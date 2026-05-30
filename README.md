@@ -16,3 +16,9 @@ Reusable custom user model for Django using email authentication.
 - Reusable app design
 
 ---
+
+## Install
+
+```bash
+pip install django-openuser
+```
