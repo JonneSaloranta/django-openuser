@@ -1,0 +1,92 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+{{ title }}
+{% endblock title %}
+
+{% block content %}
+<div class="container-sm my-4">
+    <main class="ms-sm-auto px-md-4">
+        <div class="card shadow-sm mb-2">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">{% trans "Profile" %}</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% if profile.is_private and not user.is_superuser or request.user is not user%}
+                    <div class="col-md-12 text-center">
+                        <h5 class="card-title">{% trans "This user is set to private" %}</h5>
+                    </div>
+                    {% else %}
+                    {% include "django_openuser/profile_image.html" %}
+                    <div class="col-md-9">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>{% trans "First name" %}:</strong> {{ profile.firstname }}
+                            </li>
+                            <li class="list-group-item">
+                                <strong>{% trans "Last name" %}:</strong> {{ profile.lastname }}
+                            </li>
+                            {% if user.is_staff or request.user is user%}
+                            <li class="list-group-item">
+                                <strong>{% trans "Member ID" %}:</strong> {{ profile.member_id }}
+                            </li>
+                            {% endif %}
+
+                            <li class="list-group-item">
+                                <strong>{% trans "Info" %}:</strong> {{ profile.info|default:"—" }}
+                            </li>
+                            <li class="list-group-item">
+                                {% if user.is_staff or request.user is user%}
+                                <strong>{% trans "Join date" %}:</strong> {{ profile.join_date|date:"D, d E Y" }}
+                                {% else %}
+                                <strong>{% trans "Join date" %}:</strong> {{ profile.join_date|date:"F, Y" }}
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        {% if posts %}
+        <div class="card shadow-sm mb-2">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">{% trans "User Posts" %}</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">{% trans "Title" %}</th>
+                                <th scope="col">{% trans "Date" %}</th>
+                                <th scope="col">{% trans "Likes" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts %}
+                            <tr>
+                                <td>
+                                    <a href="{{ post.get_absolute_url }}" class="text-decoration-none">{{ post.postname }} {% if not post.published %} <abbr title="Not published">❌</abbr>{% endif %}
+                                    </a>
+                                </td>
+                                <td>{{ post.created_at|date:"d.m.Y" }}</td>
+                                <td>{{ post.like_count }} ❤️</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        {% endif %}
+
+
+    </main>
+</div>
+{% endblock %}
